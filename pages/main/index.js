@@ -9,7 +9,7 @@ export default function Main() {
 
   const getTasks = async () => {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks`
+      `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks`
     );
     setTodoList(response.data.data);
   };
@@ -20,7 +20,7 @@ export default function Main() {
 
   const toggleTask = async (e) => {
     const result2 = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks/${e.target.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks/${e.target.id}`,
       { isComplete: e.target.textContent === '진행' ? true : false }
     );
 
@@ -30,7 +30,7 @@ export default function Main() {
   const uploadTask = async () => {
     try {
       const result = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks`,
+        `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks`,
         {
           task: todoValue,
           isComplete: false,
@@ -45,7 +45,7 @@ export default function Main() {
 
   const deleteTask = async (e) => {
     const result3 = await axios.delete(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks/${e.target.id}`
+      `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks/${e.target.id}`
     );
     getTasks();
   };
