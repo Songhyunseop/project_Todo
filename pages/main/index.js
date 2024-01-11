@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
-import * as S from './index.styles';
+import * as S from '../../styles/styledComponents/main.styles';
 import axios from 'axios';
+require('dotenv').config();
 
 export default function Main() {
   const [todoList, setTodoList] = useState([]);
   const [todoValue, setTodoValue] = useState('');
 
   const getTasks = async () => {
-    const response = await axios.get('http://localhost:5000/api/tasks');
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks`
+    );
     setTodoList(response.data.data);
   };
 
@@ -16,26 +19,33 @@ export default function Main() {
   };
 
   const toggleTask = async (e) => {
-    console.log(e.target.textContent);
     const result2 = await axios.put(
-      `http://localhost:5000/api/tasks/${e.target.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks/${e.target.id}`,
       { isComplete: e.target.textContent === '진행' ? true : false }
     );
+
     getTasks();
   };
 
   const uploadTask = async () => {
-    const result = await axios.post('http://localhost:5000/api/tasks', {
-      task: todoValue,
-      isComplete: false,
-    });
+    try {
+      const result = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks`,
+        {
+          task: todoValue,
+          isComplete: false,
+        }
+      );
+    } catch (error) {
+      alert('할 일을 입력하세요');
+    }
     setTodoValue('');
     getTasks();
   };
 
   const deleteTask = async (e) => {
     const result3 = await axios.delete(
-      `http://localhost:5000/api/tasks/${e.target.id}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks/${e.target.id}`
     );
     getTasks();
   };
