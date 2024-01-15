@@ -3,8 +3,9 @@ import * as S from '../../styles/styledComponents/login.styles';
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import AuthLogin from '@/auth/withAuth';
 
-export default function Login() {
+function Login() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
@@ -40,7 +41,7 @@ export default function Login() {
       const token = result.data.token;
       localStorage.setItem('accessToken', token);
 
-      router.push('/main');
+      router.push('/');
     } catch (error) {
       alert(error.response.data.error);
     }
@@ -75,3 +76,5 @@ export default function Login() {
     </>
   );
 }
+
+export default AuthLogin(Login);

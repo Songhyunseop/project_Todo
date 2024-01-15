@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import * as S from '../../styles/styledComponents/main.styles';
 import axios from 'axios';
+import AuthLogin from '../../auth/withAuth';
 require('dotenv').config();
 
-export default function Main() {
+function Main() {
   const [todoList, setTodoList] = useState([]);
   const [todoValue, setTodoValue] = useState('');
 
@@ -11,14 +12,28 @@ export default function Main() {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks`
     );
-    setTodoList(response.data.data);
+    setTodoList(response?.data?.data);
   };
 
   const saveInputTask = (e) => {
     setTodoValue(e.target.value);
   };
 
+  const newTodo = (e) => {
+    const checked = todoList.filter((el) => el._id === e.target.id);
+
+    const abc = todoList.map((el) =>
+      el._id === checked[0]._id
+        ? { ...el, isComplete: !el.isComplete }
+        : { ...el }
+    );
+
+    setTodoList(abc);
+  };
+
   const toggleTask = async (e) => {
+    newTodo(e);
+
     const result2 = await axios.put(
       `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks/${e.target.id}`,
       { isComplete: e.target.textContent === '진행' ? true : false }
@@ -84,3 +99,5 @@ export default function Main() {
     </>
   );
 }
+
+export default AuthLogin(Main);
