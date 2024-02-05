@@ -29,7 +29,8 @@ export default function SignUp() {
 
     try {
       if (pw !== secPw) throw new Error('Error: 패스워드가 일치하지 않습니다');
-      const result = await axios.post(`http://localhost:5000/api/user`, {
+
+      const result = await api.post('/user', {
         name,
         email,
         password: pw,

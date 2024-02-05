@@ -35,9 +35,13 @@ export const Task = styled.span`
 `;
 
 export const Buttons = styled.div`
-  width: 9%;
+  width: 20%;
   display: flex;
   justify-content: space-between;
+`;
+
+export const Writer = styled.span`
+  margin-right: 5px;
 `;
 
 export const Delete = styled.button`

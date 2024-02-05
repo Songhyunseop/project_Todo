@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import * as S from '../../styles/styledComponents/login.styles';
 import { useState } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import AuthLogin from '@/auth/withAuth';
+import { api } from '../api';
 
 function Login() {
   const router = useRouter();
@@ -22,27 +22,18 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const tokens = localStorage.getItem('accessToken') ?? '';
-
     try {
-      const result = await axios.post(
-        `http://localhost:5000/api/user/login`,
-        {
-          email,
-          password: pw,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${tokens}`,
-          },
-        }
-      );
+      const result = await api.post('/user/login', {
+        email,
+        password: pw,
+      });
 
       const token = result.data.token;
       localStorage.setItem('accessToken', token);
 
       router.push('/');
     } catch (error) {
+      console.log(error);
       alert(error.response.data.error);
     }
   };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import * as S from '../../styles/styledComponents/main.styles';
-import axios from 'axios';
 import AuthLogin from '../../auth/withAuth';
+import { api } from '@/pages/api';
 require('dotenv').config();
 
 function Main() {
@@ -9,9 +9,8 @@ function Main() {
   const [todoValue, setTodoValue] = useState('');
 
   const getTasks = async () => {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks`
-    );
+    const response = await api.get('/tasks');
+
     setTodoList(response?.data?.data);
   };
 
@@ -19,38 +18,35 @@ function Main() {
     setTodoValue(e.target.value);
   };
 
+  // Optimistc UI (낙관적 UI) 로직
   const newTodo = (e) => {
     const checked = todoList.filter((el) => el._id === e.target.id);
 
-    const abc = todoList.map((el) =>
+    const updatedList = todoList.map((el) =>
       el._id === checked[0]._id
         ? { ...el, isComplete: !el.isComplete }
         : { ...el }
     );
 
-    setTodoList(abc);
+    setTodoList(updatedList);
   };
 
   const toggleTask = async (e) => {
     newTodo(e);
 
-    const result2 = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks/${e.target.id}`,
-      { isComplete: e.target.textContent === '진행' ? true : false }
-    );
+    const result2 = await api.put(`/tasks/${e.target.id}`, {
+      isComplete: e.target.textContent === '진행' ? true : false,
+    });
 
     getTasks();
   };
 
   const uploadTask = async () => {
     try {
-      const result = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks`,
-        {
-          task: todoValue,
-          isComplete: false,
-        }
-      );
+      const result = await api.post('/tasks', {
+        task: todoValue,
+        isComplete: false,
+      });
     } catch (error) {
       alert('할 일을 입력하세요');
     }
@@ -59,9 +55,8 @@ function Main() {
   };
 
   const deleteTask = async (e) => {
-    const result3 = await axios.delete(
-      `${process.env.NEXT_PUBLIC_BACKEND_PROXY}/api/tasks/${e.target.id}`
-    );
+    const result3 = await api.delete(`/tasks/${e.target.id}`);
+
     getTasks();
   };
 
@@ -77,13 +72,16 @@ function Main() {
             <S.TaskInput value={todoValue} onChange={saveInputTask} />
             <S.AddBtn onClick={uploadTask}>추가</S.AddBtn>
           </S.WriteTask>
-          {todoList.length < 0 ? (
-            <h2>There is Nothing</h2>
+          {todoList.length <= 0 ? (
+            <h2 style={{ color: 'rgba(2, 232, 217, 0.82)' }}>
+              There is Nothing
+            </h2>
           ) : (
             todoList.map((el, idx) => (
               <S.TodoList key={idx}>
                 <S.Task>{el.task}</S.Task>
                 <S.Buttons>
+                  <S.Writer>{el.writer.name}</S.Writer>
                   <S.Delete id={el._id} onClick={deleteTask}>
                     삭제
                   </S.Delete>
